@@ -32,19 +32,25 @@ const FileUpload = () => {
       alert('File ready to upload!')
     }
 
-    // const formData = new FormData();
-    // formData.append("file", file); // "file" is the key your backend will expect
-
-    // try {
-    //   const response = await axios.post("http://localhost:5000/upload", formData, {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data", // Set correct content type
-    //     },
-    //   });
-    //   console.log("File uploaded successfully:", response.data);
-    // } catch (error) {
-    //   console.error("Error uploading file:", error);
-    // }
+    // Send to backend for processing
+    const handleUpload = async () => {
+      if (!file) return;
+  
+      const formData = new FormData();
+      formData.append("file", file);
+  
+      try {
+        const response = await fetch("http://127.0.0.1:8000/upload/", {
+          method: "POST",
+          body: formData,
+        });
+  
+        const data = await response.json();
+        setResult(data.predictions);
+      } catch (error) {
+        console.error("Upload failed:", error);
+      }
+    }
   };
 
   return (
