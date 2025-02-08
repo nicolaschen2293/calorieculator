@@ -24,13 +24,13 @@ const FileUpload = () => {
   };
 
   // Handle file upload
-  const handleUpload = async () => {
-    if (!file) {
-      alert("Please select a file first!");
-      return;
-    } else {
-      alert('File ready to upload!')
-    }
+  // const handleUpload = async () => {
+  //   if (!file) {
+  //     alert("Please select a file first!");
+  //     return;
+  //   } else {
+  //     alert('File ready to upload!')
+  //   }
 
     // Send to backend for processing
     const handleUpload = async () => {
@@ -46,12 +46,12 @@ const FileUpload = () => {
         });
   
         const data = await response.json();
-        setResult(data.predictions);
+        console.log('result = ', data.predictions);
       } catch (error) {
         console.error("Upload failed:", error);
       }
     }
-  };
+  // };
 
   return (
     <div className="p-4">
