@@ -104,6 +104,3 @@ def get_essential_nutrition(food_name):
     extracted_data = extract_nutrition(nutrition_data)
 
     return extracted_data
-
-print('Nutritions: ')
-print(get_essential_nutrition('ramen'))

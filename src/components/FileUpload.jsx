@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { UTF8_GENERAL_MYSQL500_CI } from "mysql/lib/protocol/constants/charsets";
 
 const FileUpload = () => {
   const [file, setFile] = useState(null);
@@ -23,35 +21,26 @@ const FileUpload = () => {
     }
   };
 
-  // Handle file upload
-  // const handleUpload = async () => {
-  //   if (!file) {
-  //     alert("Please select a file first!");
-  //     return;
-  //   } else {
-  //     alert('File ready to upload!')
-  //   }
 
-    // Send to backend for processing
-    const handleUpload = async () => {
-      if (!file) return;
-  
-      const formData = new FormData();
-      formData.append("file", file);
-  
-      try {
-        const response = await fetch("http://127.0.0.1:8000/upload/", {
-          method: "POST",
-          body: formData,
-        });
-  
-        const data = await response.json();
-        console.log('result = ', data.predictions);
-      } catch (error) {
-        console.error("Upload failed:", error);
-      }
+  // Send to backend for processing
+  const handleUpload = async () => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/upload/", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      console.log('result = ', data.result);
+    } catch (error) {
+      console.error("Upload failed:", error);
     }
-  // };
+  }
 
   return (
     <div className="p-4">

@@ -15,6 +15,7 @@ from PIL import Image
 import io
 import tensorflow as tf
 import numpy as np
+from nutrition import get_essential_nutrition
 
 app = FastAPI()
 
@@ -56,7 +57,8 @@ async def upload_file(file: UploadFile = File(...)):
         print('predictions decoded: ', decoded_predictions)
 
         # Return the top-3 predictions
-        return JSONResponse(content={"predictions": decoded_predictions[0][1]})
+        nutrition_values = get_essential_nutrition(decoded_predictions[0][1])
+        return JSONResponse(content={"result": nutrition_values})
     
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
