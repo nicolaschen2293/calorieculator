@@ -36,14 +36,14 @@ def get_food_id(food_name):
     headers = {"Authorization": f"Bearer {token}"}
 
     response = requests.get(url, headers=headers, params=params)
-    print('food id response received', response)
     
     if response.status_code == 200:
-        print('here')
         try:
             # Get the first food item and extract food_id
             food_list = response.json()["foods"]["food"]
             if isinstance(food_list, list):
+                # print('found food: ')
+                # print(food_list[0])
                 return food_list[0]["food_id"]
             else:
                 return food_list["food_id"]
@@ -76,7 +76,34 @@ def get_food_nutrition(food_name):
         return response.json()["food"]
     return {"error": "Failed to fetch food details"}
 
-# Example: Get nutrition for "Pizza"
-nutrition_data = get_food_nutrition("Fried rice")
+def extract_nutrition(data):
+    important_nutrients = [
+        "calories", "carbohydrate", "protein", "fat", 
+        "fiber", "sugar", "sodium", "cholesterol", "saturated_fat"
+    ]
+
+    # Get the first serving option (e.g., "1 cup")
+    servings = data.get("servings", {}).get("serving", [])
+    if isinstance(servings, list):
+        serving = servings[0]  # Select the first serving
+    else:
+        serving = servings  # If it's already a single dict
+
+    # Extract only the relevant nutritional values
+    extracted_data = {
+        "food_name": data.get("food_name"),
+        "serving_size": serving.get("serving_description"),
+        "nutrition": {key: serving.get(key) for key in important_nutrients}
+    }
+    
+    return extracted_data
+
+def get_essential_nutrition(food_name):
+
+    nutrition_data = get_food_nutrition(food_name)
+    extracted_data = extract_nutrition(nutrition_data)
+
+    return extracted_data
+
 print('Nutritions: ')
-print(nutrition_data)
+print(get_essential_nutrition('ramen'))
