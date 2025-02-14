@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Your FatSecret API credentials
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+CLIENT_ID = os.getenv("FATSECRET_CLIENT_ID")
+CLIENT_SECRET = os.getenv("FATSECRET_CLIENT_SECRET")
 
 # Step 1: Get OAuth Access Token
 def get_access_token():
