@@ -1,12 +1,4 @@
-# from fastapi import FastAPI
-# from routes import router
-
-# app = FastAPI()
-# app.include_router(router)
-
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
+# Run 'uvicorn main:app --reload' to start server
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,24 +29,19 @@ def preprocess_image(image):
     image = np.array(image)
     image = np.expand_dims(image, axis=0)
     image = tf.keras.applications.mobilenet_v2.preprocess_input(image)
-    print('image preprocessing done.')
     return image
 
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
-    print('file received')
     try:
         # Read image file
         contents = await file.read()
         image = Image.open(io.BytesIO(contents))
-        print('file read')
         
         # Preprocess and classify
         processed_img = preprocess_image(image)
         predictions = model.predict(processed_img)
-        print('image predicted')
         decoded_predictions = tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=3)[0]
-        print('predictions decoded: ', decoded_predictions)
 
         # Return the top-3 predictions
         nutrition_values = get_essential_nutrition(decoded_predictions[0][1])

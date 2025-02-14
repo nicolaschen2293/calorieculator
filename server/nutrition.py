@@ -1,9 +1,14 @@
 import requests
 import base64
+import os
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
 
 # Your FatSecret API credentials
-CLIENT_ID = "a7d7926381a44442b4f3b7297de6aad1"
-CLIENT_SECRET = "669bf4a999704840a87856f34842a851"
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 # Step 1: Get OAuth Access Token
 def get_access_token():
@@ -22,7 +27,6 @@ def get_access_token():
 
 # Step 2: Search for Food Name and Get food_id
 def get_food_id(food_name):
-    global token
     token = get_access_token()
     if not token:
         return {"error": "Failed to get access token"}
@@ -42,8 +46,6 @@ def get_food_id(food_name):
             # Get the first food item and extract food_id
             food_list = response.json()["foods"]["food"]
             if isinstance(food_list, list):
-                # print('found food: ')
-                # print(food_list[0])
                 return food_list[0]["food_id"]
             else:
                 return food_list["food_id"]
@@ -84,6 +86,7 @@ def extract_nutrition(data):
 
     # Get the first serving option (e.g., "1 cup")
     servings = data.get("servings", {}).get("serving", [])
+
     if isinstance(servings, list):
         serving = servings[0]  # Select the first serving
     else:
