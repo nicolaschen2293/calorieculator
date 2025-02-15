@@ -7,7 +7,8 @@ from PIL import Image
 import io
 import tensorflow as tf
 import numpy as np
-from nutrition import get_essential_nutrition
+# from server.fatsecret import get_essential_nutrition
+from nutritionix import get_essential_nutrients
 import os
 from dotenv import load_dotenv
 
@@ -50,7 +51,7 @@ async def upload_file(file: UploadFile = File(...)):
         decoded_predictions = tf.keras.applications.mobilenet_v2.decode_predictions(predictions, top=3)[0]
 
         # Return the top-3 predictions
-        nutrition_values = get_essential_nutrition(decoded_predictions[0][1])
+        nutrition_values = get_essential_nutrients(decoded_predictions[0][1])
         return JSONResponse(content={"result": nutrition_values})
     
     except Exception as e:

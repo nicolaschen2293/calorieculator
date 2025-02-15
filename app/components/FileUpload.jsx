@@ -53,18 +53,19 @@ const FileUpload = () => {
 
       const data = await response.json();
       console.log('result = ', data);
-      setFoodName(data.result.food_name)
-      setServingSize(data.result.serving_size)
+      // console.log('test fat = ', data.result['Calories'])
+      setFoodName(data.result['Food Name'])
+      setServingSize(data.result['Serving Size'])
       setNutrition({
-        calories: data.result.nutrition.calories,
-        carbohydrate: data.result.nutrition.carbohydrate,
-        protein: data.result.nutrition.protein,
-        fat: data.result.nutrition.fat,
-        fiber: data.result.nutrition.fiber,
-        sugar: data.result.nutrition.sugar,
-        sodium: data.result.nutrition.sodium,
-        cholesterol: data.result.nutrition.cholesterol,
-        saturated_fat: data.result.nutrition.saturated_fat
+        calories: data.result['Calories'],
+        carbohydrate: data.result['Total Carbohydrates'],
+        protein: data.result['Protein'],
+        fat: data.result['Total Fat'],
+        fiber: data.result['Dietary Fiber'],
+        sugar: data.result['Sugars'],
+        sodium: data.result['Sodium'],
+        cholesterol: data.result['Cholesterol'],
+        saturated_fat: data.result['Saturated Fat']
       });
     } catch (error) {
       console.error("Upload failed:", error);
@@ -84,8 +85,8 @@ const FileUpload = () => {
         <h1>{foodName}</h1>
         <h3>Nutrition Facts Per {servingSize}</h3>
         <p>Calories: {nutrition.calories}kcal</p>
-        <p>Protein: {nutrition.carbohydrate}g</p>
-        <p>Carbs: {nutrition.protein}g</p>
+        <p>Protein: {nutrition.protein}g</p>
+        <p>Carbohydrate: {nutrition.carbohydrate}g</p>
         <p>Fat: {nutrition.fat}g</p>
         <p>Fiber: {nutrition.fiber}g</p>
         <p>Sugar: {nutrition.sugar}g</p>
