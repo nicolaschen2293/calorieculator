@@ -21,7 +21,7 @@ ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN")
 # Add Cors middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[ALLOWED_ORIGIN],  # Allow requests from your frontend
+    allow_origins=['*'],  # Allow requests from your frontend
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (POST, GET, etc.)
     allow_headers=["*"],  # Allow all headers
@@ -40,6 +40,7 @@ def preprocess_image(image):
 
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
+    print('processing image from = ', ALLOWED_ORIGIN)
     try:
         # Read image file
         contents = await file.read()
