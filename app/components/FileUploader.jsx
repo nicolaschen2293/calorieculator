@@ -22,12 +22,25 @@ export default function FileUploader({ setFile }) {
     setIsCameraOn(false);
   };
 
+  const base64ToBlob = (base64) => {
+    const byteString = atob(base64.split(",")[1]); // Decode Base64
+    const mimeString = base64.split(",")[0].split(":")[1].split(";")[0]; // Get MIME type
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    
+    return new Blob([ab], { type: mimeString });
+  };
+
   // Function to capture an image
   const captureImage = () => {
     if (webcamRef.current) {
       const imageSrc = webcamRef.current.getScreenshot();
-      setFile(imageSrc)
-    // setCapturedImage(imageSrc);
+      const imageBlob = base64ToBlob(imageSrc);
+      setFile(imageBlob)
       closeCamera(); // Close camera after capturing
     }
   };
