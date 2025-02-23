@@ -2,10 +2,27 @@ import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { supabase } from "../utils/supabase";
 
-function AuthModal({ show, handleClose, action }) {
+function AuthModal({ show, handleClose }) {
 
-    const [email, setEmail] = useState(null)
-    const [password, setPassword] = useState(null)
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+
+    supabase.auth.onAuthStateChange((event, session) => {
+        console.log(event , session)
+    })
+
+    async function handleSubmit() {
+        console.log("Authentication form submitted.")
+        console.log('Signing Up with = ')
+        console.log('email = ', email)
+        console.log('password = ', password)
+        // if (action == "Log In") {
+        //     await logInUser()
+        // } else {
+        //     await signUpUser()
+        // }
+        await signUpUser()
+    }
 
     async function signUpUser() {
         const { user, error } = await supabase.auth.signUp({
@@ -17,6 +34,13 @@ function AuthModal({ show, handleClose, action }) {
             console.error('Sign-up error:', error.message);
         } else {
             console.log('User signed up:', user);
+        }
+
+        const { data: loggeduser } = await supabase.auth.getUser();
+        if (loggeduser) {
+        console.log("User is logged in:", loggeduser);
+        } else {
+        console.log("No active session.");
         }
     }
 
@@ -36,34 +60,32 @@ function AuthModal({ show, handleClose, action }) {
     return (
         <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-            <Modal.Title>{action}</Modal.Title>
+            <Modal.Title>Sign Up</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <form onSubmit={() => action == 'Log In' ? logInUser() : signUpUser()}>
-                <div>
-                    <label>Email:</label>
-                    <input 
-                        type="text"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="your@email.com"
-                        required
-                    />
-                </div> 
+            <div>
+                <label>Email:</label>
+                <input 
+                    type="text"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                />
+            </div> 
 
-                <div>
-                    <label>Password:</label>
-                    <input 
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Strong Password"
-                        required
-                    />
-                </div>
+            <div>
+                <label>Password:</label>
+                <input 
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Strong Password"
+                    required
+                />
+            </div>
 
-                <button type="submit"> Confirm </button>
-            </form> 
+            <button onClick={handleSubmit}> Confirm </button>
         </Modal.Body>
         <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
