@@ -7,10 +7,6 @@ function AuthModal({ show, handleClose }) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    supabase.auth.onAuthStateChange((event, session) => {
-        console.log(event , session)
-    })
-
     async function handleSubmit() {
         console.log("Authentication form submitted.")
         console.log('Signing Up with = ')
@@ -39,6 +35,7 @@ function AuthModal({ show, handleClose }) {
         const { data: loggeduser } = await supabase.auth.getUser();
         if (loggeduser) {
         console.log("User is logged in:", loggeduser);
+        handleClose()
         } else {
         console.log("No active session.");
         }
