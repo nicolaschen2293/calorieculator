@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import { supabase } from "../utils/supabase";
+import { useDispatch } from "react-redux";
+import { setUser } from "../utils/stores/userSlice";
 
-function AuthModal({ show, handleClose }) {
+function AuthModal({ show, handleClose, action }) {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const dispatch = useDispatch()
 
     async function handleSubmit() {
-        console.log("Authentication form submitted.")
-        console.log('Signing Up with = ')
-        console.log('email = ', email)
-        console.log('password = ', password)
-        // if (action == "Log In") {
-        //     await logInUser()
-        // } else {
-        //     await signUpUser()
-        // }
-        await signUpUser()
+        if (action == "Log In") {
+            console.log('User Log In')
+            await logInUser()
+        } else {
+            console.log('New User Sign Up')
+            await signUpUser()
+        }
     }
 
     async function signUpUser() {
@@ -30,14 +30,8 @@ function AuthModal({ show, handleClose }) {
             console.error('Sign-up error:', error.message);
         } else {
             console.log('User signed up:', user);
-        }
-
-        const { data: loggeduser } = await supabase.auth.getUser();
-        if (loggeduser) {
-        console.log("User is logged in:", loggeduser);
-        handleClose()
-        } else {
-        console.log("No active session.");
+            dispatch(setUser(user))
+            handleClose()
         }
     }
 
@@ -51,16 +45,21 @@ function AuthModal({ show, handleClose }) {
             console.error('Login error:', error.message);
         } else {
             console.log('User logged in:', user);
+            dispatch(setUser(user))
+            handleClose()
         }
     }
 
     return (
         <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-            <Modal.Title>Sign Up</Modal.Title>
+            <Modal.Title>{action}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
             <div>
+                <h6>Test User: </h6>
+                <h6>email: testemail@testmail.com</h6>
+                <h6>password: test123</h6>
                 <label>Email:</label>
                 <input 
                     type="text"

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { supabase } from "../utils/supabase"
 import FileUploader from "../components/FileUploader";
+import { Link } from "react-router-dom";
 
 export default function Uploader() {
     const [file, setFile] = useState(null); // Store file object here
@@ -17,6 +19,7 @@ export default function Uploader() {
         cholesterol: null,
         saturated_fat: null
       });
+      const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     //TO DO: when file is set, display preview image
     useEffect(() => {
@@ -89,6 +92,8 @@ export default function Uploader() {
         <p>Sodium: {nutrition.sodium}g</p>
         <p>Cholesterol: {nutrition.cholesterol}g</p>
         <p>Saturated fat: {nutrition.saturated_fat}g</p>
+
+        <Link to='/'>Home</Link>
 
       </div>
     );
