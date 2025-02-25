@@ -4,6 +4,7 @@ import FileUploader from "../components/FileUploader";
 import { Link } from "react-router-dom";
 import { checkUserSession } from "../utils/stores/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import AuthPrompt from "../components/AuthPrompt";
 
 export default function Uploader() {
     const [file, setFile] = useState(null); // Store file object here
@@ -22,17 +23,7 @@ export default function Uploader() {
       saturated_fat: null
     });
 
-    const dispatch = useDispatch()
-    const user = useSelector((state) => state.user.user)
-
-    useEffect(() => {
-        dispatch(checkUserSession())
-        if (user) {
-            console.log('User logged in: ', user)
-        } else {
-            console.log('No user logon')
-        }
-    }, [dispatch])
+    const [user, setUser] = useState(null)
 
     // When file is set, display preview image
     useEffect(() => {
@@ -46,6 +37,10 @@ export default function Uploader() {
         reader.readAsDataURL(blob);
       }
     }, [file])
+
+    const checkUser = (userData) => {
+      setUser(userData)
+    }
 
     const handleUpload = async () => {
         if (!file) return;
@@ -133,6 +128,8 @@ export default function Uploader() {
         <p>Sodium: {nutrition.sodium}g</p>
         <p>Cholesterol: {nutrition.cholesterol}g</p>
         <p>Saturated fat: {nutrition.saturated_fat}g</p>
+
+        <AuthPrompt setUser={checkUser} />
 
         {user && foodName ? <button onClick={addFoodEntry}>Consume</button> : <h6>Log in and scan foods to create food entries and track your food consumption!</h6>}
 
