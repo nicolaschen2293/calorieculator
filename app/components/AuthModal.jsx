@@ -57,9 +57,9 @@ function AuthModal({ show, handleClose, action }) {
         </Modal.Header>
         <Modal.Body>
             <div>
-                <h6>Test User: </h6>
+                {/* <h6>Test User: </h6>
                 <h6>email: testemail@testmail.com</h6>
-                <h6>password: test123</h6>
+                <h6>password: test123</h6> */}
                 <label>Email:</label>
                 <input 
                     type="text"

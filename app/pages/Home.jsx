@@ -49,7 +49,7 @@ export default function Home() {
 
         {user ? <h1>Welcome, {user.email}!</h1> : <div><button onClick={() => loginPrep()}>Log In</button> or <button onClick={() => signUpPrep()}>Sign Up</button> to view history</div>}
 
-        <button onClick={async () => await logOut()}>Log Out</button>
+        {user ?  <button onClick={async () => await logOut()}>Log Out</button> : <h1>Create an account and log in lil bro.</h1>}
 
         <AuthModal show={openAuth} handleClose={() => setOpenAuth(false)} action={action} />
 

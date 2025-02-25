@@ -2,26 +2,39 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../utils/supabase"
 import FileUploader from "../components/FileUploader";
 import { Link } from "react-router-dom";
+import { checkUserSession } from "../utils/stores/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Uploader() {
     const [file, setFile] = useState(null); // Store file object here
     const [image, setImage] = useState(null)
     const [foodName, setFoodName] = useState(null)
-      const [servingSize, setServingSize] = useState(null)
-      const [nutrition, setNutrition] = useState({
-        calories: null,
-        carbohydrate: null,
-        protein: null,
-        fat: null,
-        fiber: null,
-        sugar: null,
-        sodium: null,
-        cholesterol: null,
-        saturated_fat: null
-      });
-      const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [servingSize, setServingSize] = useState(null)
+    const [nutrition, setNutrition] = useState({
+      calories: null,
+      carbohydrate: null,
+      protein: null,
+      fat: null,
+      fiber: null,
+      sugar: null,
+      sodium: null,
+      cholesterol: null,
+      saturated_fat: null
+    });
 
-    //TO DO: when file is set, display preview image
+    const dispatch = useDispatch()
+    const user = useSelector((state) => state.user.user)
+
+    useEffect(() => {
+        dispatch(checkUserSession())
+        if (user) {
+            console.log('User logged in: ', user)
+        } else {
+            console.log('No user logon')
+        }
+    }, [dispatch])
+
+    // When file is set, display preview image
     useEffect(() => {
       if(file) {
         console.log('Setting preview image.')
@@ -68,6 +81,34 @@ export default function Uploader() {
           console.error("Upload failed:", error);
         }
       }
+
+      const addFoodEntry = async() => {
+        console.log('Adding food entry to: ', user.id)
+        const { data, error } = await supabase
+          .from('food_entries')
+          .insert([
+            {
+              user_id: user.id,
+              food_name: foodName,
+              serving_size: servingSize,
+              calories: nutrition.calories,
+              fat: nutrition.fat,
+              saturated_fat: nutrition.saturated_fat,
+              cholesterol: nutrition.cholesterol,
+              sodium: nutrition.sodium,
+              carbohydrate: nutrition.carbohydrate,
+              fiber: nutrition.fiber,
+              sugar: nutrition.sugar,
+              protein: nutrition.protein,
+            }
+          ]);
+
+          if (error) {
+            console.error('Error adding food entry: ', error)
+          }
+
+          console.log(data)
+      }
   
     return (
       <div>
@@ -92,6 +133,8 @@ export default function Uploader() {
         <p>Sodium: {nutrition.sodium}g</p>
         <p>Cholesterol: {nutrition.cholesterol}g</p>
         <p>Saturated fat: {nutrition.saturated_fat}g</p>
+
+        {user && foodName ? <button onClick={addFoodEntry}>Consume</button> : <h6>Log in and scan foods to create food entries and track your food consumption!</h6>}
 
         <Link to='/'>Home</Link>
 
