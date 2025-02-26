@@ -2,27 +2,28 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "../utils/supabase"
 import FileUploader from "../components/FileUploader";
 import { Link } from "react-router-dom";
-import { checkUserSession } from "../utils/stores/userSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import AuthPrompt from "../components/AuthPrompt";
 
 export default function Uploader() {
     const user = useSelector((state) => state.user.user)
-    const [file, setFile] = useState(null); // Store file object here
-    const [image, setImage] = useState(null)
-    const [foodName, setFoodName] = useState(null)
-    const [servingSize, setServingSize] = useState(null)
-    const [nutrition, setNutrition] = useState({
-      calories: null,
-      carbohydrate: null,
-      protein: null,
-      fat: null,
-      fiber: null,
-      sugar: null,
-      sodium: null,
-      cholesterol: null,
-      saturated_fat: null
-    });
+    const food = useSelector((state) => state.food.food)
+    const foodImg = useSelector((state) => state.food.foodImg)
+    // const [file, setFile] = useState(null); // Store file object here
+    // const [image, setImage] = useState(null)
+    // const [foodName, setFoodName] = useState(null)
+    // const [servingSize, setServingSize] = useState(null)
+    // const [nutrition, setNutrition] = useState({
+    //   calories: null,
+    //   carbohydrate: null,
+    //   protein: null,
+    //   fat: null,
+    //   fiber: null,
+    //   sugar: null,
+    //   sodium: null,
+    //   cholesterol: null,
+    //   saturated_fat: null
+    // });
 
     // When file is set, display preview image
     useEffect(() => {
@@ -36,41 +37,6 @@ export default function Uploader() {
         reader.readAsDataURL(blob);
       }
     }, [file])
-
-    const handleUpload = async () => {
-        if (!file) return;
-    
-        const formData = new FormData();
-        formData.append("file", file);
-    
-        const API_URL = import.meta.env.VITE_API_URL;
-        console.log('API URL = ', API_URL)
-    
-        try {
-          const response = await fetch(API_URL, {
-            method: "POST",
-            body: formData,
-          });
-    
-          const data = await response.json();
-          console.log('result = ', data);
-          setFoodName(data.result['Food Name'])
-          setServingSize(data.result['Serving Size'])
-          setNutrition({
-            calories: data.result['Calories'],
-            carbohydrate: data.result['Total Carbohydrates'],
-            protein: data.result['Protein'],
-            fat: data.result['Total Fat'],
-            fiber: data.result['Dietary Fiber'],
-            sugar: data.result['Sugars'],
-            sodium: data.result['Sodium'],
-            cholesterol: data.result['Cholesterol'],
-            saturated_fat: data.result['Saturated Fat']
-          });
-        } catch (error) {
-          console.error("Upload failed:", error);
-        }
-      }
 
       const addFoodEntry = async() => {
         console.log('Adding food entry to: ', user.id)
@@ -112,9 +78,9 @@ export default function Uploader() {
           Upload
         </button>
 
-        <h1>{foodName}</h1>
-        <h3>Nutrition Facts Per {servingSize}</h3>
-        <p>Calories: {nutrition.calories}kcal</p>
+        <h1>{food['Food Name']}</h1>
+        <h3>Nutrition Facts Per {food['Serving Size']}</h3>
+        {/* <p>Calories: {nutrition.calories}kcal</p>
         <p>Protein: {nutrition.protein}g</p>
         <p>Carbohydrate: {nutrition.carbohydrate}g</p>
         <p>Fat: {nutrition.fat}g</p>
@@ -122,7 +88,7 @@ export default function Uploader() {
         <p>Sugar: {nutrition.sugar}g</p>
         <p>Sodium: {nutrition.sodium}g</p>
         <p>Cholesterol: {nutrition.cholesterol}g</p>
-        <p>Saturated fat: {nutrition.saturated_fat}g</p>
+        <p>Saturated fat: {nutrition.saturated_fat}g</p> */}
 
         <AuthPrompt />
 
