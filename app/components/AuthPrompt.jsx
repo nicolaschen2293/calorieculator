@@ -3,18 +3,17 @@ import AuthModal from "./AuthModal";
 import { useDispatch, useSelector } from "react-redux";
 import { checkUserSession } from "../utils/stores/userSlice";
 
-export default function AuthPrompt({ setUser }) {
+export default function AuthPrompt() {
 
     const [openAuth, setOpenAuth] = useState(false)
     const [action, setAction] = useState('Log In')
+    const user = useSelector((state) => state.user.user) 
     const dispatch = useDispatch()
-    const user = useSelector((state) => state.user.user)
 
     useEffect(() => {
         dispatch(checkUserSession())
         if (user) {
             console.log('User logged in: ', user)
-            setUser(user)
         } else {
             console.log('No user logon')
         }

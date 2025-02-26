@@ -2,18 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom'
 import { supabase } from "../utils/supabase";
 import AuthPrompt from "../components/AuthPrompt";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { logOutUser } from "../utils/stores/userSlice";
 
 export default function Home() {
 
     const [caloriesConsumed, setCaloriesConsumed] = useState(0)
-    const [user, setUser] = useState(null)
-    const dispatch = useDispatch()
-    
-    const checkUser = (userData) => {
-        setUser(userData)
-    }
+    const user = useSelector((state) => state.user.user)
+    const dispatch = useDispatch()    
 
     async function logOut() {
         const { error } = await supabase.auth.signOut();
@@ -31,7 +27,7 @@ export default function Home() {
 
         <h2>You have consumed {caloriesConsumed} kcal today!</h2>
 
-        <AuthPrompt setUser={checkUser} />
+        <AuthPrompt />
 
         {user ?  <button onClick={async () => await logOut()}>Log Out</button> : <h1>Create an account and log in lil bro.</h1>}
 

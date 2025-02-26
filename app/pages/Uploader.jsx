@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AuthPrompt from "../components/AuthPrompt";
 
 export default function Uploader() {
+    const user = useSelector((state) => state.user.user)
     const [file, setFile] = useState(null); // Store file object here
     const [image, setImage] = useState(null)
     const [foodName, setFoodName] = useState(null)
@@ -23,8 +24,6 @@ export default function Uploader() {
       saturated_fat: null
     });
 
-    const [user, setUser] = useState(null)
-
     // When file is set, display preview image
     useEffect(() => {
       if(file) {
@@ -37,10 +36,6 @@ export default function Uploader() {
         reader.readAsDataURL(blob);
       }
     }, [file])
-
-    const checkUser = (userData) => {
-      setUser(userData)
-    }
 
     const handleUpload = async () => {
         if (!file) return;
@@ -129,7 +124,7 @@ export default function Uploader() {
         <p>Cholesterol: {nutrition.cholesterol}g</p>
         <p>Saturated fat: {nutrition.saturated_fat}g</p>
 
-        <AuthPrompt setUser={checkUser} />
+        <AuthPrompt />
 
         {user && foodName ? <button onClick={addFoodEntry}>Consume</button> : <h6>Log in and scan foods to create food entries and track your food consumption!</h6>}
 
