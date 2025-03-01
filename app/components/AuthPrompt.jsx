@@ -33,7 +33,7 @@ export default function AuthPrompt() {
 
     return (
         <div>
-            {user ? <h1>Welcome, {user.email}!</h1> : <div><button onClick={() => loginPrep()}>Log In</button> or <button onClick={() => signUpPrep()}>Sign Up</button> to use this feature!</div>}
+            {user ? <h5>Welcome, {user.email}!</h5> : <div><button onClick={() => loginPrep()}>Log In</button> or <button onClick={() => signUpPrep()}>Sign Up</button> to use this feature!</div>}
 
             <AuthModal show={openAuth} handleClose={() => setOpenAuth(false)} action={action} />
         </div>
