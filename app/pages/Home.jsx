@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 export default function Home() {
 
     const [caloriesConsumed, setCaloriesConsumed] = useState(0)
+    const [loading, setLoading] = useState(false)
     const [file, setFile] = useState(null)
     const [image, setImage] = useState(null)
     const user = useSelector((state) => state.user.user)
@@ -56,6 +57,7 @@ export default function Home() {
     const handleUpload = async () => {
         if (!file) return;
     
+        setLoading(true)
         const formData = new FormData();
         formData.append("file", file);
     
@@ -73,30 +75,30 @@ export default function Home() {
           navigate('/uploader')
         } catch (error) {
           console.error("Upload failed:", error);
+        } finally {
+          setLoading(false)
         }
       }
 
     return (
-        <div key={user}>
+        <div key={user} className="d-flex flex-column align-items-center justify-content-center vh-100 gap-3">
         <h1>CalorieCulator</h1>
 
         <h2>You have consumed {caloriesConsumed} kcal today!</h2>
 
         <AuthPrompt />
 
-        {user ? <button onClick={async () => await logOut()}>Log Out</button> : <h5>Create an account and log in lil bro.</h5>}
+        {user ? <button onClick={async () => await logOut()} disabled={loading}>Log Out</button> : <h5>Create an account and log in lil bro.</h5>}
 
         <FileUploader setFile={setFile} />
         
-        {image && <img src={image} className="col-12" alt="Preview" style={{ width: "150px", height: "150px" }}/>}
+        {image && <img src={image} className="" alt="Preview" style={{ width: "150px", height: "150px" }}/>}
 
-        <button onClick={handleUpload}>
-          Upload
+        <button onClick={handleUpload} disabled={loading}>
+          {loading ? "Uploading..." : "Upload"}
         </button>
 
-        <br />
-
-        <Link to='/uploader'>Eat Something</Link>
+        {loading && <h4>Uploading image... </h4>}
         
         <br />
 

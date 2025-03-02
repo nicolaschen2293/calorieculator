@@ -34,7 +34,7 @@ export default function History() {
       }, [user]);
 
     return (
-        <div>
+        <div className="d-flex flex-column align-items-center justify-content-center vh-100 gap-3">
         <h1>Food Consumption History</h1>
 
         <AuthPrompt />
@@ -43,9 +43,9 @@ export default function History() {
                 <div>
                     <h5>Food Entries:</h5>
                     <ul>
-                    {foodEntries.map((entry) => (
-                    <li key={entry.id}>
-                        {entry.food_name} - {entry.calories} Calories
+                    {foodEntries.map((food) => (
+                    <li key={food.id}>
+                        {food.food_name} - {food.calories} Kcal
                     </li>
                     ))}
                     </ul>

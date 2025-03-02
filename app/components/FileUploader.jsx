@@ -46,7 +46,7 @@ export default function FileUploader({ setFile }) {
   };
 
   return (
-    <div className="d-flex flex-column justify-content-center align-items-center pb-2">
+    <div className="d-flex flex-column justify-content-center align-items-center pb-2 gap-3">
         <input type="file" onChange={handleFileChange} className="col-10" />
 
         {!isCameraOn && !capturedImage && (
