@@ -77,14 +77,14 @@ export default function Home() {
       }
 
     return (
-        <div>
+        <div key={user}>
         <h1>CalorieCulator</h1>
 
         <h2>You have consumed {caloriesConsumed} kcal today!</h2>
 
         <AuthPrompt />
 
-        {user ?  <button onClick={async () => await logOut()}>Log Out</button> : <h1>Create an account and log in lil bro.</h1>}
+        {user ? <button onClick={async () => await logOut()}>Log Out</button> : <h5>Create an account and log in lil bro.</h5>}
 
         <FileUploader setFile={setFile} />
         
@@ -93,6 +93,8 @@ export default function Home() {
         <button onClick={handleUpload}>
           Upload
         </button>
+
+        <br />
 
         <Link to='/uploader'>Eat Something</Link>
         
