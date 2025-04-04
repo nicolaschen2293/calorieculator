@@ -12,6 +12,7 @@ export default function Home() {
 
     const [caloriesConsumed, setCaloriesConsumed] = useState(0)
     const [loading, setLoading] = useState(false)
+    const [uploadError, setUploadError] = useState(false)
     const [file, setFile] = useState(null)
     const [image, setImage] = useState(null)
     const user = useSelector((state) => state.user.user)
@@ -29,6 +30,7 @@ export default function Home() {
 
         const processImg = async () => {
             if(file) {
+            setUploadError(false);
             console.log('Setting preview image.')
             const reader = new FileReader();
             const blob = new Blob([file], { type: file.type })
@@ -71,8 +73,12 @@ export default function Home() {
           });
     
           const data = await response.json();
-          dispatch(setFood(data.result))
-          navigate('/uploader')
+          if (data['error']) {
+            setUploadError(true);
+          } else {
+            dispatch(setFood(data.result));
+            navigate('/uploader');
+          }
         } catch (error) {
           console.error("Upload failed:", error);
         } finally {
@@ -99,6 +105,7 @@ export default function Home() {
         </button>
 
         {loading && <h4>Uploading image... </h4>}
+        {uploadError && <h4>Image recognition failed.</h4>}
         
         <br />
 
