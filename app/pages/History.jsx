@@ -45,7 +45,7 @@ export default function History() {
                     <ul>
                     {foodEntries.map((food) => (
                     <li key={food.id}>
-                        {food.food_name} - {food.calories} Kcal
+                        {food.food_name} - {food.calories} Kcal - {new Date(food.created_at).toLocaleString()}
                     </li>
                     ))}
                     </ul>

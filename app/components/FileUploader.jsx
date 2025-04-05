@@ -5,6 +5,7 @@ export default function FileUploader({ setFile }) {
   const webcamRef = useRef(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [isCameraOn, setIsCameraOn] = useState(false);
+  const [videoConstraints, setVideoConstraints] = useState(null);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0]
@@ -12,7 +13,35 @@ export default function FileUploader({ setFile }) {
   };
 
   // Function to open the camera
-  const openCamera = () => {
+  const openCamera = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoInputDevices = devices.filter(device => device.kind === "videoinput");
+  
+      // Try to find a camera labeled as "back" or "environment"
+      const backCamera = videoInputDevices.find(device =>
+        device.label.toLowerCase().includes("back") ||
+        device.label.toLowerCase().includes("environment")
+      );
+  
+      if (backCamera) {
+        setVideoConstraints({
+          deviceId: backCamera.deviceId
+        });
+      } else {
+        // Fallback to default/front camera
+        setVideoConstraints({
+          facingMode: "user"
+        });
+      }
+  
+      setIsCameraOn(true);
+      setCapturedImage(null);
+    } catch (error) {
+      console.error("Camera error:", error);
+      alert("Could not access camera");
+    }
+
     setIsCameraOn(true);
     setCapturedImage(null); // Reset captured image
   };
@@ -60,6 +89,7 @@ export default function FileUploader({ setFile }) {
             <Webcam
                 ref={webcamRef}
                 screenshotFormat="image/png"
+                videoConstraints={videoConstraints}
                 className="pb-2"
             />
             <button onClick={captureImage} className="">
