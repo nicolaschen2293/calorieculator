@@ -1,8 +1,10 @@
 import React, { useRef, useState } from "react";
 import Webcam from "react-webcam";
+import { Camera } from "react-camera-pro";
 
 export default function FileUploader({ setFile }) {
   const webcamRef = useRef(null);
+  const camera = useRef(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [videoConstraints, setVideoConstraints] = useState(null);
@@ -14,34 +16,6 @@ export default function FileUploader({ setFile }) {
 
   // Function to open the camera
   const openCamera = async () => {
-    // try {
-    //   const devices = await navigator.mediaDevices.enumerateDevices();
-    //   const videoInputDevices = devices.filter(device => device.kind === "videoinput");
-  
-    //   // Try to find a camera labeled as "back" or "environment"
-    //   const backCamera = videoInputDevices.find(device =>
-    //     device.label.toLowerCase().includes("back") ||
-    //     device.label.toLowerCase().includes("environment")
-    //   );
-  
-    //   if (backCamera) {
-    //     setVideoConstraints({
-    //       deviceId: backCamera.deviceId
-    //     });
-    //   } else {
-    //     // Fallback to default/front camera
-    //     setVideoConstraints({
-    //       facingMode: "user"
-    //     });
-    //   }
-  
-    //   setIsCameraOn(true);
-    //   setCapturedImage(null);
-    // } catch (error) {
-    //   console.error("Camera error:", error);
-    //   alert("Could not access camera");
-    // }
-
     setVideoConstraints({ ideal: "environment" });
     setIsCameraOn(true);
     setCapturedImage(null); // Reset captured image
@@ -67,12 +41,11 @@ export default function FileUploader({ setFile }) {
 
   // Function to capture an image
   const captureImage = () => {
-    if (webcamRef.current) {
-      const imageSrc = webcamRef.current.getScreenshot();
-      const imageBlob = base64ToBlob(imageSrc);
-      setFile(imageBlob)
-      closeCamera(); // Close camera after capturing
-    }
+    const image = camera.current.takePhoto();
+    fetch(image)
+      .then(res => res.blob())
+      .then(blob => setFile(blob));
+    closeCamera();
   };
 
   return (
@@ -86,20 +59,21 @@ export default function FileUploader({ setFile }) {
         )}
 
         {isCameraOn && (
-            <div className="d-flex flex-column justify-content-center align-items-center pb-2">
-            <Webcam
-                ref={webcamRef}
-                screenshotFormat="image/png"
-                videoConstraints={videoConstraints}
-                className="pb-2"
-            />
-            <button onClick={captureImage} className="">
-                Capture Photo
-            </button>
-            <br />
-            <button onClick={closeCamera} className="">
-                Close Camera
-            </button>
+            <div className="w-100 d-flex flex-column justify-content-center" style={{ maxWidth: "600px" }}>
+              <Camera
+                  ref={camera}
+                  aspectRatio={4 / 3}
+                  facingMode="environment"
+                  className="w-100 mb-3 border rounded"
+                  style={{ height: "auto" }}
+              />
+              <button onClick={captureImage} className="">
+                  Capture Photo
+              </button>
+              <br />
+              <button onClick={closeCamera} className="">
+                  Close Camera
+              </button>
             </div>
         )}
 
