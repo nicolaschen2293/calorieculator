@@ -14,34 +14,35 @@ export default function FileUploader({ setFile }) {
 
   // Function to open the camera
   const openCamera = async () => {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoInputDevices = devices.filter(device => device.kind === "videoinput");
+    // try {
+    //   const devices = await navigator.mediaDevices.enumerateDevices();
+    //   const videoInputDevices = devices.filter(device => device.kind === "videoinput");
   
-      // Try to find a camera labeled as "back" or "environment"
-      const backCamera = videoInputDevices.find(device =>
-        device.label.toLowerCase().includes("back") ||
-        device.label.toLowerCase().includes("environment")
-      );
+    //   // Try to find a camera labeled as "back" or "environment"
+    //   const backCamera = videoInputDevices.find(device =>
+    //     device.label.toLowerCase().includes("back") ||
+    //     device.label.toLowerCase().includes("environment")
+    //   );
   
-      if (backCamera) {
-        setVideoConstraints({
-          deviceId: backCamera.deviceId
-        });
-      } else {
-        // Fallback to default/front camera
-        setVideoConstraints({
-          facingMode: "user"
-        });
-      }
+    //   if (backCamera) {
+    //     setVideoConstraints({
+    //       deviceId: backCamera.deviceId
+    //     });
+    //   } else {
+    //     // Fallback to default/front camera
+    //     setVideoConstraints({
+    //       facingMode: "user"
+    //     });
+    //   }
   
-      setIsCameraOn(true);
-      setCapturedImage(null);
-    } catch (error) {
-      console.error("Camera error:", error);
-      alert("Could not access camera");
-    }
+    //   setIsCameraOn(true);
+    //   setCapturedImage(null);
+    // } catch (error) {
+    //   console.error("Camera error:", error);
+    //   alert("Could not access camera");
+    // }
 
+    setVideoConstraints({ ideal: "environment" });
     setIsCameraOn(true);
     setCapturedImage(null); // Reset captured image
   };
