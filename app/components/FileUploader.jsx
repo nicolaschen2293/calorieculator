@@ -1,22 +1,19 @@
 import React, { useRef, useState } from "react";
-import Webcam from "react-webcam";
 import { Camera } from "react-camera-pro";
 
 export default function FileUploader({ setFile }) {
-  const webcamRef = useRef(null);
   const camera = useRef(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [isCameraOn, setIsCameraOn] = useState(false);
-  const [videoConstraints, setVideoConstraints] = useState(null);
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0]
+    closeCamera();
+    const selectedFile = e.target.files[0];
     setFile(selectedFile);
   };
 
   // Function to open the camera
   const openCamera = async () => {
-    setVideoConstraints({ ideal: "environment" });
     setIsCameraOn(true);
     setCapturedImage(null); // Reset captured image
   };
@@ -24,19 +21,6 @@ export default function FileUploader({ setFile }) {
   // Function to close the camera
   const closeCamera = () => {
     setIsCameraOn(false);
-  };
-
-  const base64ToBlob = (base64) => {
-    const byteString = atob(base64.split(",")[1]); // Decode Base64
-    const mimeString = base64.split(",")[0].split(":")[1].split(";")[0]; // Get MIME type
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    
-    return new Blob([ab], { type: mimeString });
   };
 
   // Function to capture an image
