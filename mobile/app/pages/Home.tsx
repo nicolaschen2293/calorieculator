@@ -1,45 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Platform } from "react-native";
 import { Text, Snackbar, Button, Avatar, TouchableRipple, ActivityIndicator } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import Constants from 'expo-constants';
 
 export default function HomeScreen() {
-    const [file, setFile] = useState(null);
+    const [file, setFile] = useState<any>(null);
     const [image, setImage] = useState('');
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
     const navigation = useNavigation();
-
-    // useEffect(() => {
-    //     const convertBlobToBase64 = async (blob: Blob) => {
-    //         return new Promise((resolve) => {
-    //           const reader = new FileReader();
-    //           reader.readAsDataURL(blob);
-    //           reader.onloadend = () => resolve(reader.result);
-    //         });
-    //     };
-
-    //     const processImg = async () => {
-    //         if(file) {
-    //         setUploadError(false);
-    //         console.log('Setting preview image.')
-    //         const reader = new FileReader();
-    //         const blob = new Blob([file], { type: file.type })
-    //         const b64 = await convertBlobToBase64(blob)
-    //         // implement global store
-    //         // dispatch(setFoodImg(b64))
-    //         reader.onloadend = () => {
-    //             setImage(reader.result);
-    //         };
-    //         reader.readAsDataURL(blob);
-    //         }
-    //     }
-
-    //     processImg()
-    // }, [file])
 
     const pickImage = async () => {
         // Ask for permission
@@ -51,48 +23,60 @@ export default function HomeScreen() {
     
         // Launch image picker
         let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ['images'],
-          quality: 1,
-          base64: true, // Optional: useful for uploading directly as base64
+            mediaTypes: 'images',
+            quality: 1,
+            base64: true, // Optional: useful for uploading directly as base64
         });
     
         if (!result.canceled) {
-          setImage(result.assets[0].uri); // Save image URI
-        }
-    };
+            const asset = result.assets[0];
 
-    const handleImagePick = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({ base64: true });
-        // if (!result.canceled) {
-        // setImage(result.assets[0].uri);
-        // }
+            const fileType = asset.uri.split('.').pop();
+
+            const fileToUpload = {
+                uri: asset.uri,
+                name: `photo.${fileType}`,
+                type: `image/${fileType}`,
+            };
+
+            setFile(fileToUpload);
+            setImage(asset.uri); // to preview or display the image
+            // setFile(result.assets[0].file);
+            // setImage(result.assets[0].uri); // Save image URI
+        }
     };
 
     const handleUpload = async () => {
         setUploading(true);
-        console.log(uploading);
-        // const formData = new FormData();
-        // formData.append("file", image);
-        // const API_URL = Constants.expoConfig?.extra?.API_URL.VITE_API_URL;
 
-        // try {
-        //     const response = await fetch(API_URL, {
-        //         method: "POST",
-        //         body: formData,
-        //     });
+        const formData = new FormData();
+        formData.append('file', file);
 
-        //     const data = await response.json();
-        //     if (data['error']) {
-        //         setUploadError(true);
-        //     } else {
-        //         dispatch(setFood(data.result));
-        //         navigate('/uploader');
-        //     }
-        // } catch (err) {
-        // setErrorVisible(true);
-        // } finally {
-        // setUploading(false);
-        // }
+        const API_URL = Constants.expoConfig?.extra?.API_URL;
+        console.log("uploading to ", API_URL);
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                body: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            const data = await response.json();
+            if (data['error']) {
+                setUploadError(true);
+            } else {
+                console.log("upload success, data retreived: ");
+                console.log(data);
+            }
+        } catch (err) {
+            console.log(err);
+            setErrorVisible(true);
+        } finally {
+            setUploading(false);
+        }
     };
 
     return (

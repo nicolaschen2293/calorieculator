@@ -16,7 +16,7 @@ app = FastAPI()
 
 # Load .env file
 load_dotenv()
-ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN")
+ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN_WEB")
 
 # Add Cors middleware
 app.add_middleware(
@@ -40,7 +40,7 @@ def preprocess_image(image):
 
 @app.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
-    print('processing image from = ', ALLOWED_ORIGIN)
+    print('processing image')
     try:
         # Read image file
         contents = await file.read()
