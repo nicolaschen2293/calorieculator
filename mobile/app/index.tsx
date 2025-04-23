@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Image, StyleSheet, Platform } from "react-native";
 import { Text, Snackbar, Button, Avatar, TouchableRipple, ActivityIndicator } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router"
 import Constants from 'expo-constants';
 
 // Home Screen and Entry Point
@@ -12,7 +12,8 @@ export default function Index() {
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
-    const navigation = useNavigation();
+
+    const router = useRouter()
 
     // Select image from camera
     const pickImage = async () => {
@@ -70,8 +71,16 @@ export default function Index() {
             if (data['error']) {
                 setUploadError(true);
             } else {
-                console.log("upload success, data retreived: ");
-                console.log(data);
+                console.log("Upload success, data received: ");
+                console.log(image);
+                console.log(typeof image);
+                router.push({
+                  pathname: "/screens/ResultScreen",
+                  params: {
+                    result: JSON.stringify(data), // Serialize if it's an object
+                    image: image,
+                  },
+                });
             }
         } catch (err) {
             console.log(err);
@@ -109,7 +118,7 @@ export default function Index() {
     );
     }
 
-    const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         padding: 20,
         justifyContent: "center",
