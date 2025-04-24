@@ -1,6 +1,6 @@
 import React, { ReactNode, useState } from "react";
 import { ScrollView, View, Image, StyleSheet } from "react-native";
-import { Card, Text, Title, Divider } from "react-native-paper";
+import { Card, Text, Title, Divider, Avatar } from "react-native-paper";
 import { useLocalSearchParams } from "expo-router";
 
 export default function ResultScreen() {
@@ -44,14 +44,14 @@ export default function ResultScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: '#6c443c' }}>
       {image && <Image source={{ uri: image as string }} style={{
-          marginTop: 18,
-          width: 200,
-          height: 200,
-          alignSelf: "center",
-          borderRadius: 10,
+        marginTop: 18,
+        width: 200,
+        height: 200,
+        alignSelf: "center",
+        borderRadius: 10,
       }}/>}
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Card style={{ borderRadius: 12, gap: 10, backgroundColor: '#e4b48c' }}>
+        <Card style={{ borderRadius: 12, gap: 10, backgroundColor: '#cfb2b0' }}>
         <Card.Content>
           <Title style={{ fontSize: 22, marginBottom: 10, textAlign: 'center' }}>
             {data["result"]["Food Name"]?.toUpperCase()}
@@ -75,6 +75,9 @@ export default function ResultScreen() {
         </Card.Content>
         </Card>
       </ScrollView>
+
+      <Avatar.Icon size={60} icon="upload" style={{ alignSelf: 'center', marginBottom: 5 }} />
+      <Text variant="titleMedium" style={{ alignSelf: 'center', marginBottom: 20, color: 'white', fontWeight: "bold", fontSize: 20 }}>Eat</Text>
     </View>
   );
 }
