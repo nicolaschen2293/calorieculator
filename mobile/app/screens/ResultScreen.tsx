@@ -7,6 +7,10 @@ export default function ResultScreen() {
   const { result, image } = useLocalSearchParams();
   const data = JSON.parse(result as string);
 
+  console.log("uri in resultscreen: ");
+  console.log(image);
+  console.log(typeof image);
+
   return (
     <View>
       {image && <Image source={{ uri: image as string }} style={{

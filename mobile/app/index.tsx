@@ -71,14 +71,14 @@ export default function Index() {
             if (data['error']) {
                 setUploadError(true);
             } else {
-                console.log("Upload success, data received: ");
+                console.log("uri in index: ");
                 console.log(image);
                 console.log(typeof image);
                 router.push({
                   pathname: "/screens/ResultScreen",
                   params: {
                     result: JSON.stringify(data), // Serialize if it's an object
-                    image: image,
+                    image: encodeURIComponent(image),
                   },
                 });
             }
@@ -93,7 +93,7 @@ export default function Index() {
     return (
         <View style={styles.container}>
             <Text variant="headlineMedium" style={styles.title}>CalorieCulator</Text>
-            <Text variant="titleMedium" style={styles.title}>You have consumed 0 kcal today!</Text>
+            <Text variant="titleMedium" style={styles.title}>You have consumed 0 kcal today!!!</Text>
 
             <View style={styles.buttonGroup}>
             <TouchableRipple onPress={pickImage} borderless rippleColor="rgba(0, 0, 0, .32)">
