@@ -7,39 +7,72 @@ export default function ResultScreen() {
   const { result, image } = useLocalSearchParams();
   const data = JSON.parse(result as string);
 
-  console.log("uri in resultscreen: ");
-  console.log(image);
-  console.log(typeof image);
+  const unitsMap: Record<string, string> = {
+    "Calories": "kcal",
+    "Total Fat": "g",
+    "Saturated Fat": "g",
+    "Cholesterol": "mg",
+    "Sodium": "mg",
+    "Total Carbohydrates": "g",
+    "Dietary Fiber": "g",
+    "Sugars": "g",
+    "Protein": "g",
+    "Serving Size": "", // No unit, just text
+  };
+
+  const highlightColors: Record<string, string> = {
+    "Calories": "#4CAF50",          // Green
+    "Protein": "#F44336",           // Red
+    "Total Fat": "#FFEB3B",       // Yellow
+    "Cholesterol": "#FF9800",       // Orange
+    "Sugars": "#03A9F4",            // Blue
+  };
+
+  const orderedKeys = [
+    "Calories",
+    "Serving Size",
+    "Total Fat",
+    "Saturated Fat",
+    "Cholesterol",
+    "Sodium",
+    "Total Carbohydrates",
+    "Dietary Fiber",
+    "Sugars",
+    "Protein"
+  ];
 
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: '#6c443c' }}>
       {image && <Image source={{ uri: image as string }} style={{
+          marginTop: 18,
           width: 200,
           height: 200,
           alignSelf: "center",
           borderRadius: 10,
       }}/>}
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <Card style={{ borderRadius: 12 }}>
-          <Card.Content>
-            <Title style={{ fontSize: 22, marginBottom: 10 }}>
-              {data["result"]["Food Name"]?.toUpperCase()}
-            </Title>
-            <Divider style={{ marginBottom: 0 }} />
+        <Card style={{ borderRadius: 12, gap: 10, backgroundColor: '#e4b48c' }}>
+        <Card.Content>
+          <Title style={{ fontSize: 22, marginBottom: 10, textAlign: 'center' }}>
+            {data["result"]["Food Name"]?.toUpperCase()}
+          </Title>
+          <Divider style={{ marginBottom: 10 }} />
 
-            <View style={{ gap: 5 }}>
-              {Object.entries(data["result"]).map(([key, value]) => {
-                if (key === "Food Name") return null; // Skip title duplicate
-                return (
-                  <View key={key}>
-                    <Text variant="labelLarge">{key}</Text>
-                    <Text variant="bodyMedium">{value as ReactNode}</Text>
-                    <Divider style={{ marginTop: 8 }} />
-                  </View>
-                );
-              })}
-            </View>
-          </Card.Content>
+          {orderedKeys.map((key) => {
+            const value = data["result"][key];
+            if (value == null) return null;
+            return (
+              <View key={key} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 6 }}>
+                <Text style={{ fontWeight: "bold", width: 150, color: highlightColors[key] || "#000", fontSize: 16 }}>
+                  {key}
+                </Text>
+                <Text style={{ textAlign: "right", color: highlightColors[key] || "#000", fontSize: 16 }}>
+                  {`${value} ${unitsMap[key] || ""}`}
+                </Text>
+              </View>
+            );
+          })}
+        </Card.Content>
         </Card>
       </ScrollView>
     </View>
