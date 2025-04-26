@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { View, Image, StyleSheet, Platform } from "react-native";
-import { Text, Snackbar, Button, Avatar, TouchableRipple, ActivityIndicator } from "react-native-paper";
+import { Text, Snackbar, Button, Avatar, TouchableRipple, TextInput, Portal, Dialog } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router"
 import Constants from 'expo-constants';
+import { supabase } from "@/utils/supabase";
 
 // Home Screen and Entry Point
 export default function Index() {
@@ -12,6 +13,39 @@ export default function Index() {
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState(false);
     const [errorVisible, setErrorVisible] = useState(false);
+
+    // Supabase and auth modal attributes
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [visible, setVisible] = useState(false);
+    const [authMode, setAuthMode] = useState('Log In');
+
+    const signUp = async () => {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+      
+        if (error) {
+          console.error("Sign up error:", error.message);
+        } else {
+          console.log("User signed up:", data);
+        }
+    };
+
+    const handleLogin = async () => {
+       const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+        
+        if (error) {
+            console.error('Login error:', error.message);
+        } else {
+            console.log('User logged in:', data);
+            setVisible(false);
+        } 
+    }
 
     const router = useRouter()
 
@@ -109,11 +143,29 @@ export default function Index() {
                 {uploading ? "Uploading..." : "Upload"}
             </Button>
 
+            <TouchableRipple onPress={() => setVisible(true)} borderless rippleColor="rgba(0, 0, 0, .32)" style={{ alignSelf: 'center'}}>
+                <Avatar.Icon size={60} icon="login" />
+            </TouchableRipple>
+
             {/* <Button onPress={() => navigation.navigate('History')}>View History</Button> */}
 
             <Snackbar visible={errorVisible} onDismiss={() => setErrorVisible(false)}>
                 Image recognition failed.
             </Snackbar>
+
+            <Portal>
+                <Dialog visible={visible} onDismiss={() => setVisible(false)}>
+                    <Dialog.Title>{ authMode }</Dialog.Title>
+                    <Dialog.Content>
+                        <TextInput label="Email" value={email} onChangeText={setEmail} />
+                        <TextInput label="Password" value={password} onChangeText={setPassword} secureTextEntry />
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={handleLogin}>Log In</Button>
+                        <Button onPress={() => setVisible(false)}>Cancel</Button>
+                    </Dialog.Actions>
+                </Dialog>
+            </Portal>
         </View>
     );
     }
