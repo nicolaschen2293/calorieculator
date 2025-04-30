@@ -142,6 +142,10 @@ export default function Index() {
         }
     };
 
+    const hideSnackBar = () => {
+        setErrorVisible(false);
+    }
+
     return (
         <View style={styles.container}>
             <Text variant="headlineMedium" style={styles.title}>CalorieCulator</Text>
@@ -188,7 +192,10 @@ export default function Index() {
 
             {/* <Button onPress={() => navigation.navigate('History')}>View History</Button> */}
 
-            <Snackbar visible={errorVisible || uploadError} onDismiss={() => setErrorVisible(false)}>
+            <Snackbar visible={errorVisible} onDismiss={hideSnackBar} duration={3000} action={{
+                label: "X",
+                onPress: hideSnackBar,
+                }}>
                 Image recognition failed.
             </Snackbar>
 
