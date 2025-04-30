@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Image, StyleSheet, Platform } from "react-native";
-import { Text, Snackbar, Button, Avatar, TouchableRipple, TextInput, Portal, Dialog } from "react-native-paper";
+import { View, Image, StyleSheet, Platform, TouchableOpacity } from "react-native";
+import { Text, Snackbar, Button, Avatar, TouchableRipple, TextInput, Portal, Dialog, } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router"
 import Constants from 'expo-constants';
 import { supabase } from "@/utils/supabase";
+import { useAuth } from "../context/AppProvider";
 
 // Home Screen and Entry Point
 export default function Index() {
@@ -18,23 +19,31 @@ export default function Index() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [visible, setVisible] = useState(false);
-    const [authMode, setAuthMode] = useState('Log In');
+    const [login, setLogin] = useState(true);
 
-    const signUp = async () => {
+    // Stored sessions
+    const { user, loading } = useAuth();
+
+    const handleSignUp = async () => {
         const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
+            email,
+            password,
         });
       
         if (error) {
-          console.error("Sign up error:", error.message);
+            console.error("Sign up error:", error.message);
         } else {
-          console.log("User signed up:", data);
+            console.log("User signed up:", data);
+            setVisible(false);
         }
+
+        setEmail('');
+        setPassword('');
     };
 
     const handleLogin = async () => {
-       const { data, error } = await supabase.auth.signInWithPassword({
+        console.log('logging in... ')
+        const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
@@ -44,7 +53,19 @@ export default function Index() {
         } else {
             console.log('User logged in:', data);
             setVisible(false);
-        } 
+        }
+        
+        setEmail('');
+        setPassword('');
+    }
+
+    const handleLogOut = async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error("Log out error:", error.message);
+        } else {
+            console.log("User logged out successfully.");
+        }
     }
 
     const router = useRouter()
@@ -54,8 +75,8 @@ export default function Index() {
         // Ask for permission
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {
-          alert("Permission to access camera roll is required!");
-          return;
+            alert("Permission to access camera roll is required!");
+            return;
         }
     
         // Launch image picker
@@ -105,9 +126,6 @@ export default function Index() {
             if (data['error']) {
                 setUploadError(true);
             } else {
-                console.log("uri in index: ");
-                console.log(image);
-                console.log(typeof image);
                 router.push({
                   pathname: "/screens/ResultScreen",
                   params: {
@@ -127,7 +145,7 @@ export default function Index() {
     return (
         <View style={styles.container}>
             <Text variant="headlineMedium" style={styles.title}>CalorieCulator</Text>
-            <Text variant="titleMedium" style={styles.title}>You have consumed 0 kcal today!!!</Text>
+            <Text variant="titleMedium" style={styles.title}>You have consumed 0 kcal today!</Text>
 
             <View style={styles.buttonGroup}>
             <TouchableRipple onPress={pickImage} borderless rippleColor="rgba(0, 0, 0, .32)">
@@ -143,25 +161,46 @@ export default function Index() {
                 {uploading ? "Uploading..." : "Upload"}
             </Button>
 
-            <TouchableRipple onPress={() => setVisible(true)} borderless rippleColor="rgba(0, 0, 0, .32)" style={{ alignSelf: 'center'}}>
-                <Avatar.Icon size={60} icon="login" />
-            </TouchableRipple>
+            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+                {loading ? (
+                    <Text>Loading...</Text>
+                ) : user ? (
+                    <>
+                        <Text>Welcome, {user.email}!</Text>
+                        <TouchableOpacity onPress={handleLogOut}>
+                            <Text style={{ color: 'blue', margin: 10, alignSelf: 'center' }}>Log Out</Text>
+                        </TouchableOpacity>
+                    </>
+                ) : (
+                    <>
+                        <TouchableOpacity onPress={() => { setVisible(true); setLogin(true); }}>
+                            <Text style={{ color: 'blue', margin: 10, alignSelf: 'center' }}>Log In</Text>
+                        </TouchableOpacity>
+
+                        <Text style={{ alignSelf: 'center' }}>or</Text>
+
+                        <TouchableOpacity onPress={() => { setVisible(true); setLogin(false); }}>
+                            <Text style={{ color: 'blue', margin: 10, alignSelf: 'center' }}>Sign Up</Text>
+                        </TouchableOpacity>
+                    </>
+                )}
+            </View>
 
             {/* <Button onPress={() => navigation.navigate('History')}>View History</Button> */}
 
-            <Snackbar visible={errorVisible} onDismiss={() => setErrorVisible(false)}>
+            <Snackbar visible={errorVisible || uploadError} onDismiss={() => setErrorVisible(false)}>
                 Image recognition failed.
             </Snackbar>
 
             <Portal>
                 <Dialog visible={visible} onDismiss={() => setVisible(false)}>
-                    <Dialog.Title>{ authMode }</Dialog.Title>
+                    <Dialog.Title>{ login ? 'Log In' : 'Sign Up' }</Dialog.Title>
                     <Dialog.Content>
                         <TextInput label="Email" value={email} onChangeText={setEmail} />
                         <TextInput label="Password" value={password} onChangeText={setPassword} secureTextEntry />
                     </Dialog.Content>
                     <Dialog.Actions>
-                        <Button onPress={handleLogin}>Log In</Button>
+                        <Button onPress={login ? handleLogin : handleSignUp}>{ login ? 'Log In' : 'Sign Up' }</Button>
                         <Button onPress={() => setVisible(false)}>Cancel</Button>
                     </Dialog.Actions>
                 </Dialog>
